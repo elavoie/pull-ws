@@ -31,10 +31,16 @@ module.exports = function (opts, onConnection) {
   var server = opts.server ||
     (opts.key && opts.cert ? https.createServer(opts) : http.createServer())
 
-  var wsServer = new WebSocket.Server({
+  var wsServerOptions = {
     server: server,
-    verifyClient: opts.verifyClient
-  })
+    verifyClient: opts.verifyClient,
+  }
+
+  if (opts.path) {
+    wsServerOptions.path = opts.path
+  }
+
+  var wsServer = new WebSocket.Server(wsServerOptions)
 
   proxy(server, 'listening')
   proxy(server, 'request')
